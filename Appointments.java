@@ -27,14 +27,13 @@ public class Appointments {
 	}
 	
 	public void setAppointmentDate(LocalDateTime appointmentDate) {
-		this.appointmentDate = Objects.nonNull(appointmentDate) ? appointmentDate : LocalDateTime.now();
+		this.appointmentDate = Objects.nonNull(appointmentDate) ? appointmentDate : LocalDateTime.now();	
 	}
 	
 	 
 	@Override
 	public String toString() {
-		return String.format("Patient name: %s" + 
-						"\nAppointment date: %s", (patient.getFirstName() + " " + patient.getLastName()),
+		return String.format("\nAppointment date: %s",
 						(appointmentDate.getMonth() + " " + appointmentDate.getDayOfMonth() + ", "
 						+ appointmentDate.getYear() + " " + appointmentDate.getHour() 
 						+ ":" + appointmentDate.getMinute()));

@@ -1,7 +1,8 @@
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Patient {
+public class Patient extends User {
+	
 	
 	private int patientId;
 	private String firstName;
@@ -13,11 +14,8 @@ public class Patient {
 	
 	public Patient(int patientId, String firstName, String lastName, 
 			String phoneNum, String email, String gender, LocalDate birthDate) {
+		super(firstName, lastName, phoneNum, email);
 		setPatientId(patientId);
-		setFirstName(firstName);
-		setLastName(lastName);
-		setPhoneNum(phoneNum);
-		setEmail(email);
 		setGender(gender);
 		setBirthDate(birthDate);	
 	}
@@ -28,18 +26,6 @@ public class Patient {
 	}
 	public int getPatientID() {
 		return patientId;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public String getPhoneNum() {
-		return phoneNum;
-	}
-	public String getEmail() {
-		return email;
 	}
 	public String getGender() {
 		return gender;
@@ -55,25 +41,10 @@ public class Patient {
 	public void setPatientId(int patientId) {
 		this.patientId = patientId < 100000 && patientId > 1000 ? patientId : 1000 + (int)Math.random(); 
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName.isEmpty() || Objects.isNull(firstName) ? "Unknown" : firstName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName.isEmpty() || Objects.isNull(lastName) ? "Unknown" : lastName;
-	}
-	public void setPhoneNum(String phoneNum) {
-		this.phoneNum = phoneNum.isEmpty() || Objects.isNull(phoneNum) ? "Unknown" : phoneNum;
-	}
-	public void setEmail(String email) {
-		this.email = email.isEmpty() || Objects.isNull(email) ? "Unknown" : email;
-	}
 	
 	@Override
 	public String toString() {
-		return  "Patient name: " + getFirstName() + " " + getLastName()
-						+ "\nPatient ID: " + getPatientID()
-						+ "\nEmail: " + getEmail()
-						+ "\nPhone number: " + getPhoneNum()
+		return  super.toString() + "\nPatient ID: " + getPatientID()
 						+ "\nGender: " + getGender() 
 						+ "\nBirth Date: " + getBirthDate();
 	}

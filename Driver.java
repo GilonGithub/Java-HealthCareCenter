@@ -2,40 +2,30 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Driver {
 	
 	public static Scanner input = new Scanner(System.in);
-	public static String userChoice;
 	
-	public static void showOptions() {
-		
+	
+	public static String showOptions() {
+		String userChoice;
 		do { 
 			System.out.println("Enter p for a patient or d for a doctor: ");
 			userChoice = input.next();
 			
-			
 		} while (!userChoice.equalsIgnoreCase("p") && !userChoice.equalsIgnoreCase("d"));
-			
+	return userChoice;		
 	}
 	
-	public static void patientOrDoctorPortal (ArrayList<Doctor> doctors, 
-			ArrayList<Patient> patients,
-			ArrayList<Appointments> appointments) {
-		switch (userChoice) {
-		case "p": patientPortal(patients, appointments);
-			break;
-		case "d": doctorPortal(doctors);
-			break;
-		}
-	}
 	
 	public static void doctorPortal(ArrayList<Doctor> doctors) {
 		int userChoice;
 		boolean isFound;
 		do {
-			System.out.println("Enter your ID: ");
+			System.out.println("\nEnter your ID: ");
 			userChoice = input.nextInt();
 			isFound = searchForDoctor(userChoice, doctors);
 		} while (!isFound);
@@ -55,8 +45,7 @@ public class Driver {
 				isFound = true;
 			}
 		}
-				return isFound;
-		
+				return isFound;	
 	}
 	
 	public static boolean searchForPatient(int patientId, ArrayList<Patient> patients) {
@@ -69,39 +58,67 @@ public class Driver {
 				return isFound;	
 	}
 	
-	public static void patientPortal(ArrayList<Patient> patients, ArrayList<Appointments> appointments) {
+	public static Patient patientPortal(ArrayList<Patient> patients) {
 		int userChoice;
 		boolean isFound;
 		do {
-			System.out.println("Enter your ID: ");
+			System.out.println("\nEnter your ID: ");
 			userChoice = input.nextInt();
 			isFound = searchForPatient(userChoice, patients);
 		} while (!isFound);
 		
 		for (Patient p : patients) {
 			if (p.getPatientID() == userChoice) {
-				System.out.println("Patient ID: " + p.getPatientID() +
+				System.out.println("\nPatient ID: " + p.getPatientID() +
 						"\nPatient name: " + p.getFirstName() + " " + p.getLastName());
-				setAppoitment(p, appointments);
+				return p;
 			}
 		}
-		
+	return null;	
 	}
 	
-	public static void setAppoitment(Patient patient, ArrayList<Appointments> appointments) {
-		System.out.println("Enter the date in format yyyy-mm-dd hh:mm");
-		String userDate = input.nextLine();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); 
-		LocalDateTime dateTime = LocalDateTime.parse(userDate, formatter);
+	public static Appointments setAppoitment(Patient patient) {
+		LocalDateTime dateTime;
+		do {
+			Scanner input = new Scanner(System.in);
+			System.out.println("\nEnter the date in format yyyy-mm-dd hh:mm");
+			String userDate = input.nextLine();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); 
+			dateTime = LocalDateTime.parse(userDate, formatter);
+			
+		} while (Objects.isNull(dateTime) || dateTime.isBefore(LocalDateTime.now()));
+				
+		return(new Appointments(patient, dateTime));
 		
-		System.out.println(dateTime);
-		//appointments.add(new Appointments(patient, dateTime));
-		//System.out.println(appointments.get(0).toString());
 	}
 
+	public static Doctor searchForDoctorAddApt(ArrayList<Doctor> doctors, Appointments appointment) {
+		int userChoice;
+		boolean isFound;
+		do {
+			System.out.println("\nEnter doctor's ID: ");
+			userChoice = input.nextInt();
+			isFound = searchForDoctor(userChoice, doctors);
+		} while (!isFound);
+		
+		for (Doctor d : doctors) {
+			if (d.getDoctorId() == userChoice) {
+				d.addAppointment(appointment);
+				return d;
+			}
+		}
+		return null;		
+	}
+	
+	public static void printAppointment(Patient patient, Appointments newAppointment, Doctor doctor) {
+		System.out.println("\nPatient: " + patient.getFirstName() + " " + patient.getLastName()
+							+ newAppointment 
+							+ " with doctor " + doctor.getFirstName() + " " + doctor.getLastName());
+	}
+	
 	public static void main(String[] args) {
 		
-		Patient p1 = new Patient(84783, "John", "Smith", "847 978 0877", "john@gmail.com", "male", LocalDate.of(1974, 9, 18));
+		Patient p1 = new Patient(8888, "John", "Smith", "847 978 0877", "john@gmail.com", "male", LocalDate.of(1974, 9, 18));
 		Patient p2 = new Patient(8476, "Jim", "Smith", "847 978 0877", "john@gmail.com", "male", LocalDate.of(1974, 9, 18));
 		Patient p3 = new Patient(32678, "Patrick", "Smith", "847 978 0877", "john@gmail.com", "male", LocalDate.of(1974, 9, 18));
 		Patient p4 = new Patient(425, "Len", "Smith", "847 978 0877", "john@gmail.com", "male", LocalDate.of(1974, 9, 18));
@@ -127,16 +144,11 @@ public class Driver {
 		
 		
 		Appointments apt1 = new Appointments(p1, LocalDateTime.of(2020, 11, 20, 10, 15));
-		Appointments apt2 = new Appointments(p1, LocalDateTime.of(2020, 12, 20, 13, 15));
-		System.out.println(apt1);
-		
-		ArrayList<Appointments> appointments = new ArrayList<>();
-		appointments.add(apt1);
-		appointments.add(apt2);
+		Appointments apt2 = new Appointments(p2, LocalDateTime.of(2020, 12, 20, 13, 15));
 		
 		
-		Doctor d1 = new Doctor(7480, "Jack", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
-		Doctor d2 = new Doctor(965, "Jim", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
+		Doctor d1 = new Doctor(7777, "Jack", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
+		Doctor d2 = new Doctor(9999, "Jim", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
 		Doctor d3 = new Doctor(07544, "Peter", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
 		Doctor d4 = new Doctor(076, "Patricia", "Novy", "797 384 8364", "jackN@gmail.com", "gynecologist");
 		
@@ -145,16 +157,20 @@ public class Driver {
 		doctors.add(d2);
 		doctors.add(d3);
 		doctors.add(d4);
-		
-		
+			
 		d1.addAppointment(apt1);
 		d1.addAppointment(apt2);
-		System.out.println(d1);
 		
 		
+		if (showOptions().equalsIgnoreCase("p")) {
+			Patient patient = patientPortal(patients);
+			Appointments newAppointment = setAppoitment(patient);
+			Doctor doctor = searchForDoctorAddApt(doctors, newAppointment);
+			printAppointment(patient, newAppointment, doctor);
+		} else {
+			doctorPortal(doctors);
+		};
 		
-		showOptions();
-		patientOrDoctorPortal(doctors, patients, appointments);
-		
+			
 }
 }
